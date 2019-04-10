@@ -1,0 +1,28 @@
+subroutine rms2int(  inverse, dt, vrms, nt,  vint )
+integer it, wide,    inverse,           nt
+real    vmin,                 dt, vrms( nt), vint( nt)
+temporary real                     sum( nt), vis ( nt)
+if( inverse == 0) {
+        do it= 1, nt 
+                sum(it)= ((it-1)*dt) * amax1( vrms(it)**2, 1.5**2 )
+        vis(1) = amin1( vrms(1) ** 2 , 1.5 ** 2 )
+        do it= 2, nt
+                vis(it) = ( sum(it) - sum(it-1) )/ dt
+        wide= 2;  repeat {
+                vmin = vis(1);  do it=1,nt { if( vis(it)<vmin)  vmin = vis(it) }
+                if( vmin > 0 )   break
+                call triangle( wide, 1, nt, vis, vis)           # smooth vis()
+                wide = wide + 1
+                if( wide >= nt/3) call erexit('negative velocity')
+                }
+        do it= 1, nt
+                vint(it) = sqrt( vis(it))
+        }
+else {                          do it= 1, nt
+                                        vis(it) = vint(it) ** 2
+        sum(1) = 0.;            do it= 2, nt
+                                        sum(it) = sum(it-1) + vis(it) * dt
+        vrms(1) = vint(1);      do it= 2, nt
+                                        vrms(it) = sqrt( sum(it) / ((it-1)*dt) )
+        }
+return; end

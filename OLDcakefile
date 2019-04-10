@@ -1,0 +1,31 @@
+$#define DEBUG
+#include <SEP.defs>
+
+$#define USER [[whoami]]
+#define WORKDIR ./Scr/MTYPE
+#define FULLSRCDIR [[pwd]]
+
+default : install_lib
+	@-echo "cake install_lib command finished"
+
+#ifndef MTYPE
+
+dummy&:
+	@-echo " "
+	@-echo "the macro MTYPE has not been set in the global file <SEP.defs>"
+	@-echo "this is probably in /usr/local/lib/cake"
+	@-echo "add support for the current machine before continuing "
+	@exit(1)
+
+#else
+
+%&:
+	@echo machine type is MTYPE
+	@echo work directory is WORKDIR
+	@echo 
+	!if( ! -e WORKDIR ) mkdir WORKDIR
+	-cp Cakefile.dir WORKDIR/Cakefile
+	! pushd WORKDIR; cake -DSRCDIR=FULLSRCDIR % ; popd
+	-RM_CMD WORKDIR/Cakefile
+
+#endif

@@ -1,0 +1,6 @@
+integer function pad2( n )
+integer n
+pad2 = 1
+while( pad2 < n )
+        pad2 = pad2 * 2 
+return; end

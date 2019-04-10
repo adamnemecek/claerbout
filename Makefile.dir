@@ -1,0 +1,9 @@
+include ${SEPINC}/SEP.top
+
+default: ${LIBDIR}/libbei.a 
+
+distclean: clean
+	@-${RM} ./${MTYPE}/${LIBNAME}
+
+include ${SEPINC}/Prg.rules.lib
+include ${SEPINC}/SEP.bottom

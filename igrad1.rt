@@ -1,0 +1,13 @@
+subroutine igrad1( adj, add,  xx,n,  yy   )
+integer i,         adj, add,     n
+real                          xx(n), yy(n)
+call adjnull(      adj, add,  xx,n,  yy,n )
+do i= 1, n-1 {
+        if( adj == 0 )
+                yy(i) = yy(i) + xx(i+1) - xx(i)
+        else {
+                xx(i+1) = xx(i+1) + yy(i)
+                xx(i  ) = xx(i  ) - yy(i)
+                }
+        }
+return; end

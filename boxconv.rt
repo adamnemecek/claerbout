@@ -1,0 +1,24 @@
+subroutine boxconv( nb, nx, xx, yy)
+# inputs:       nx,  xx(i), i=1,nx      the data
+#               nb                      the box length
+# output:       yy(i),i=1,nx+nb-1       smoothed data
+integer nx, ny, nb, i
+real xx(nx), yy(1)
+temporary real bb(nx+nb)
+# "||" means .OR.
+if( nb < 1 || nb > nx)  call erexit('boxconv')  
+ny = nx+nb-1
+do i= 1, ny
+        bb(i) = 0.
+bb(1) = xx(1)
+do i= 2, nx
+                bb(i) = bb(i-1) + xx(i)         # make B(Z) = X(Z)/(1-Z)
+do i= nx+1, ny
+                bb(i) = bb(i-1)
+do i= 1, nb
+                yy(i) = bb(i)
+do i= nb+1, ny
+                yy(i) = bb(i) - bb(i-nb)        # make Y(Z) = B(Z)*(1-Z**nb)
+do i= 1, ny
+                yy(i) = yy(i) / nb
+return; end

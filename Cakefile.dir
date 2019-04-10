@@ -1,0 +1,15 @@
+#define INSTALL_OFFICIAL_PLACE
+
+#define LIBDIRS -L/usr/local/lib
+#include <SEP.defs>
+
+#define LIBNAME libbei.a
+$#define LIBLINKDIR /usr/lib
+
+#include <SEP.lib.rules>
+
+#include <SEP.obj.rules>
+
+clean& :
+	-RM_CMD *.o *.f core LIBNAME
+

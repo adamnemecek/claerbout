@@ -1,0 +1,19 @@
+#  Scaled linear interpolation.
+#
+subroutine spotw( adj, add, scale, nt,t0,dt, t, val,   vec   )
+integer it,itc,   adj, add,        nt
+real tc, fraction,          scale,    t0,dt, t, val,   vec(nt)
+call adjnull(     adj, add,                     val,1, vec,nt)
+tc = .5+ (t-t0) / dt;   itc = tc;        it = 1 + itc;  fraction = tc - itc
+if( 1 <= it  &&  it < nt) {
+        if( adj == 0) {
+                vec(it  ) = vec(it  ) + (1.-fraction) * val * scale
+                vec(it+1) = vec(it+1) +   fraction    * val * scale
+                }
+        else
+                val = val + ((1.-fraction) * vec(it)  +
+                               fraction    * vec(it+1)  ) * scale
+        }
+else
+        call erexit('spotw: at boundary')
+return; end

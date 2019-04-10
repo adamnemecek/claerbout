@@ -1,0 +1,21 @@
+# veltran --- velocity transform with anti-aliasing and sqrt(-i omega)
+#
+subroutine veltran(adj,add,psun,s02,anti,t0,dt,x0,dx,s0,ds,nt,nx,ns,model,data)
+integer it,ix,is,  adj,add,psun,                           nt,nx,ns
+real x, s, wt,               s02,anti,t0,dt,x0,dx,s0,ds,model(nt,ns),data(nt,nx)
+temporary real slow(nt), half(nt,nx)
+call null(               half,nt*nx)
+call adjnull(      adj,add,                             model,nt*ns, data,nt*nx)
+if( adj != 0)   do ix = 1, nx 
+                        call halfdifa( adj,   0, nt, half(1, ix), data(1, ix) )
+do is= 1, ns {  s = s0 + (is-1) * ds;   do it=1,nt { slow(it) = s}
+do ix= 1, nx {  x = x0 + (ix-1) * dx
+        if     ( psun == 2 ) {  wt =       abs( s * x)  }       # vel tran
+        else if( psun == 1 ) {  wt = sqrt( abs( s * x)) }       # pseudounitary
+        else                 {  wt = 1.                 }       # modeling
+        call trimo( adj, 1, t0,dt,dx, x, nt,slow, s02, _
+                        wt , anti,  model(1,is),  half(1,ix))
+        }}
+if( adj == 0)   do ix = 1, nx 
+                        call halfdifa( adj, add, nt, half(1, ix), data(1, ix) )
+return; end

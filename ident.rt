@@ -1,0 +1,11 @@
+subroutine ident( adj, add, epsilon, n, pp,    qq   )
+integer i,        adj, add,          n
+real                        epsilon,    pp(n), qq(n)  # equivalence (pp,qq) OK
+if( adj == 0 ) {
+        if( add == 0 ) { do i=1,n {  qq(i) =         epsilon * pp(i) } }
+        else           { do i=1,n {  qq(i) = qq(i) + epsilon * pp(i) } }
+        }
+else {  if( add == 0 ) { do i=1,n {  pp(i) =         epsilon * qq(i) } }
+        else           { do i=1,n {  pp(i) = pp(i) + epsilon * qq(i) } }
+        }
+return; end

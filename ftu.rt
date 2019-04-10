@@ -1,0 +1,34 @@
+subroutine ftu( signi, nx, cx )
+#   complex fourier transform with unitary scaling
+#
+#               1         nx          signi*2*pi*i*(j-1)*(k-1)/nx
+#   cx(k)  =  -------- * sum cx(j) * e
+#             sqrt(nx)   j=1             for k=1,2,...,nx=2**integer
+#
+integer nx, i, j, k, m, istep, pad2
+real    signi, scale, arg
+complex cx(nx), cmplx, cw, cdel, ct
+if( nx != pad2(nx) )    call erexit('ftu: nx not a power of 2')
+scale = 1. / sqrt( 1.*nx)
+do i= 1, nx
+        cx(i) = cx(i) * scale
+j = 1;  k = 1
+do i= 1, nx {
+        if (i<=j) { ct = cx(j); cx(j) = cx(i); cx(i) = ct }
+        m = nx/2
+        ! "&&" means .AND.
+        while (j>m && m>1) { j = j-m; m = m/2 }          
+        j = j+m
+        }
+repeat {
+        istep = 2*k;   cw = 1.;   arg = signi*3.14159265/k
+        cdel = cmplx( cos(arg), sin(arg))
+        do m= 1, k {
+                do i= m, nx, istep
+                        { ct=cw*cx(i+k);  cx(i+k)=cx(i)-ct;  cx(i)=cx(i)+ct }
+                cw = cw * cdel
+                }
+        k = istep
+	if(k>=nx) break
+        }  
+return; end

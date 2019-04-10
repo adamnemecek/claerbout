@@ -1,0 +1,23 @@
+subroutine slowfit( vsurface, alpha, t0,dt, s0,ds, scan,nt,ns, reg,    slow)
+integer irange, it,is,                                  nt,ns
+real num,den, t,s,  vsurface, alpha, t0,dt, s0,ds, scan(nt,ns),reg(nt),slow(nt)
+do it= 1, nt {  t= t0 + dt*(it-1) + dt
+        reg(it)  = 1./( vsurface * sqrt( (exp(alpha*t) - 1.)/(alpha*t) ))
+        slow(it) = reg(it)
+        }
+do irange= ns/4, 5, -1 {                                # shrink the fairway
+do it=     1,   nt     {        t= t0 + dt*(it-1)
+        do is= 1, ns   {        s= s0 + ds*(is-1)
+                if( s > slow(it) + irange*ds)   scan(it,is) = 0.
+                if( s < slow(it) - irange*ds)   scan(it,is) = 0.
+                if( s > 1./1.6              )   scan(it,is) = 0.        # water
+                }
+        den= 0.0;       num= 0.0
+        do is= 1, ns {  s= s0 + ds*(is-1)
+                num = num + scan(it,is) * s
+                den = den + scan(it,is)
+                }
+        slow(it) = num / ( den + 1.e-20)
+        if( slow(it) == 0.)   slow(it) = 1./vsurface
+        }}
+return; end

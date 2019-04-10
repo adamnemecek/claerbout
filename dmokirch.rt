@@ -1,0 +1,22 @@
+subroutine dmokirch( adj, add, velhalf, h, t0,dt,dx, modl,nt,nx, data)
+integer ix,iz,it,ib, adj, add,                            nt,nx
+real    amp,t,z,b,             velhalf, h, t0,dt,dx, modl(nt,nx),data(nt,nx)
+call adjnull(        adj, add,                       modl,nt*nx, data,nt*nx)
+if( h == 0)     call erexit('h=0')
+do ib= -nx, nx {        b = dx * ib             # b = midpt separation
+    do iz= 2, nt {      z = t0 + dt * (iz-1)    # z = zero-offset time
+
+        if( h**2 <= b**2 )                  next
+        t= sqrt(  z**2 / (1-b**2/h**2) )
+        amp= sqrt(t) * dx/h
+        if( velhalf*abs(b) * t*t > h**2*z)  break
+        it = 1.5 + (t - t0) / dt
+        if( it > nt )                       break
+        do ix= max0(1, 1-ib),  min0(nx, nx-ib)
+                if( adj == 0 )
+                        data(it,ix+ib) = data(it,ix+ib) + modl(iz,ix   ) * amp
+                else
+                        modl(iz,ix   ) = modl(iz,ix   ) + data(it,ix+ib) * amp
+        }
+   }
+return; end

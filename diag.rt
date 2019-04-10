@@ -1,0 +1,11 @@
+subroutine diag( adj, add, lambda,n,  pp,    qq)
+integer i,       adj, add,        n                   # equivalence (pp,qq) OK
+real                       lambda(n), pp(n), qq(n)
+if( adj == 0 ) {
+        if( add == 0 ) { do i=1,n {  qq(i) =         lambda(i) * pp(i) } }
+        else           { do i=1,n {  qq(i) = qq(i) + lambda(i) * pp(i) } }
+        }
+else {  if( add == 0 ) { do i=1,n {  pp(i) =         lambda(i) * qq(i) } }
+        else           { do i=1,n {  pp(i) = pp(i) + lambda(i) * qq(i) } }
+        }
+return; end

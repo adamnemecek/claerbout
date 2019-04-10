@@ -1,0 +1,44 @@
+# Two quantile utilities.  Changed since formally tested.
+#
+# value = value of bb(k) if bb(1...n) were sorted into increasing order.
+subroutine quantile( k, n, bb, value)
+        integer   i, k, n;      real bb(n), value
+        temporary real aa(n)
+        do i= 1, n
+                aa(i) = bb(i)
+        call quantinternal( k, n, aa)
+        value = aa(k)
+        return; end
+
+# value = value of abs(bb(k)) if abs(bb(1...n)) were sorted to increasing order.
+subroutine quantabs( k, n, bb, value)
+        integer   i, k, n;      real bb(n), value
+        temporary real aa(n)
+        do i= 1, n
+                aa(i) = abs( bb(i))
+        call quantinternal( k, n, aa)
+        value = aa(k)
+        return; end
+
+subroutine quantinternal( k, n, a)
+integer k, n;                   real a(n)
+integer i, j, low, hi;          real ak, aa
+if( k>n || k<1)  call erexit("quant: inputs not in range  1 <= k <= n ")
+low = 1;        hi = n
+while( low < hi) {
+        ak = a(k);      i = low;        j = hi
+        repeat {
+                if( a(i) < ak)
+                        i = i+1
+                else {
+                        while( a(j) > ak)       j = j-1
+                        if( i > j)  break 
+                        aa = a(i);      a(i) = a(j);    a(j) = aa
+                        i = i+1;        j = j-1
+                        if( i > j)  break 
+                        }
+                }
+        if( j < k)  low = i
+        if( k < i)  hi = j
+        }
+return; end

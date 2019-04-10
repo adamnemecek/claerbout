@@ -1,0 +1,21 @@
+# FT a vector in a matrix, with first omega = - pi
+#
+subroutine  fth( adj,sign, m1, n12, cx)
+integer i,       adj,      m1, n12
+real sign
+complex cx(m1,n12)
+temporary complex temp(n12)
+do i= 1, n12
+        temp(i) = cx(1,i)
+if( adj == 0)   { do i= 2, n12, 2
+                        temp(i) =  -temp(i)
+                  call ftu(  sign, n12, temp)
+                }
+else            { call ftu( -sign, n12, temp)
+                  do i= 2, n12, 2
+                        temp(i) =  -temp(i)
+                }
+do i= 1, n12
+        cx(1,i) = temp(i)
+return; end
+
